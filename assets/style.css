@@ -84,9 +84,135 @@ svg {
 
 /*General Styling*/
 
-body{
-    background-color: var(--clr-neutral-300);
-    font-size: var(--fs-body);
-    color: var(--clr-neutral-200);
+body {
+  background-color: var(--clr-neutral-300);
+  font-size: var(--fs-body);
+  color: var(--clr-neutral-200);
+  font-family: var(--ff-body);
 }
 
+.font-bold{
+  font-weight: var(--fw-bold);
+}
+
+.font-bolder{
+  font-weight: var(--fw-bolder);
+}
+
+.text-name{
+  color: var(--clr-neutral-100);
+}
+
+.text-blue{
+  color: var(--clr-primary-600);
+}
+
+.text-red{
+  color: var(--clr-primary-500);
+}
+
+.mt-1{
+  margin-top: 1rem;
+}
+
+.mt-2{
+  margin-top: 1.5rem;
+}
+
+.mt-3{
+  margin-top: 2rem;
+}
+
+.mb-1{
+  margin-bottom: 1rem;
+}
+
+.mb-2{
+  margin-bottom: 1.5rem;
+}
+
+.mb-3{
+  margin-bottom: 2rem;
+}
+
+.pt-1{
+  padding-top: 1rem;
+}
+
+.pt-2{
+  padding-top: 1.5rem;
+}
+
+.pt-3{
+  padding-top: 3rem;
+}
+
+.pb-1{
+  padding-bottom: 1rem;
+}
+
+.pb-2{
+  padding-bottom: 1.5rem;
+}
+
+.pb-3{
+  padding-bottom: 3rem;
+}
+
+.fs-2{
+  font-size: 1.235rem;
+}
+
+.fs-3{
+  font-size: 1.55rem;
+}
+
+/*project styling*/
+.comment{
+  background-color: var(--clr-neutral-400);
+  padding-inline: 1rem;
+  margin-inline: 1.2rem;
+  margin-top: 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  padding-bottom: 1rem;
+}
+
+.comment-top{
+  display: flex;
+  align-items: center;
+  padding-inline: 5px;
+  gap: 20px;
+}
+
+.avatar{
+  max-width: 46px;
+}
+
+.comment-bottom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vote{
+  background-color: var(--clr-neutral-300);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+}
+
+.vote button{
+  border: none;
+  cursor: pointer;
+}
+
+.reply{
+  display: flex;
+  border: none;
+  gap: 1rem;
+  cursor: pointer;
+  background-color: transparent;
+}
