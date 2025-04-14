@@ -13,13 +13,12 @@ fetch('./data.json')
         let comments_HTML = '';
       
         displayed_comments.forEach(comment => {
-          comments_HTML += generate_comment_html(comment); // top-level comment
+          comments_HTML += generate_comment_html(comment);
       
           if (comment.replies && comment.replies.length > 0) {
-            // Replies are grouped but not squished
             comments_HTML += '<div class="replies-wrapper">';
             comment.replies.forEach(reply => {
-              comments_HTML += generate_comment_html(reply);
+              comments_HTML += generate_reply_html(reply);
             });
             comments_HTML += '</div>';
           }
@@ -46,13 +45,39 @@ fetch('./data.json')
                 <span class="score font-bold text-blue">${comment.score}</span>
                 <button class="subtract"><img src="./assets/images/icon-minus.svg" alt="icon minus"></button>
               </div>
-              <button class="reply text-blue font-bolder">
+             <button class="reply text-blue font-bolder">
                 <img src="./assets/images/icon-reply.svg" alt="reply icon">
                 <p>Reply</p>
-              </button>
+            </button>
             </div>
           </div>
         `;
     };
+
+    const generate_reply_html = (reply) => {
+        return `
+            <div class="comment">
+            <div class="comment-top pt-2">
+              <img class="avatar" src="${reply.user.image.webp}" alt="avatar">
+              <p class="font-bolder text-name fs-2">${reply.user.username}</p>
+              <p class="font-bold text-sm">${reply.createdAt}</p>
+            </div>
+            <p class="font-bold pt-2">
+              ${reply.replyingTo ? `<span class="replying-to">@${reply.replyingTo}</span> ` : ''}${reply.content}
+            </p>
+            <div class="comment-bottom pt-2">
+              <div class="vote">
+                <button class="add"><img src="./assets/images/icon-plus.svg" alt="icon plus"></button>
+                <span class="score font-bold text-blue">${reply.score}</span>
+                <button class="subtract"><img src="./assets/images/icon-minus.svg" alt="icon minus"></button>
+              </div>
+               <div class="delete-edit">
+               <button><img src="./assets/images/icon-delete.svg" alt="delete icon"/></button>
+               <button><img src="./assets/images/icon-edit.svg" alt="edit icon"/></button>
+              </div>
+            </div>
+          </div>
+        `
+    }
       
       

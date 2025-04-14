@@ -167,6 +167,10 @@ body {
   font-size: 1.55rem;
 }
 
+.text-sm{
+  min-width: 100%;
+}
+
 /*project styling*/
 .comment{
   background-color: var(--clr-neutral-400);
@@ -221,22 +225,64 @@ body {
   margin-left: 1.875rem;
 }
 
-.replies {
-  margin-left: 40px;
-  border-left: 2px solid #ccc;
-  padding-left: 16px;
-}
+
 .reply {
   background-color: #f9f9f9;
 }
+
 .replying-to {
   color: #4f92ff;
   font-weight: bold;
 }
 
-
 .replies-wrapper {
-  margin-left: 2rem;
+  margin-left: 0.875rem;
   border-left: 2px solid var(--clr-neutral-300);
-  padding-left: 1rem;
+}
+
+.post-comment{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  background-color: var(--clr-neutral-500);
+  padding-block: 1.5rem;
+  margin-inline: 1.5rem;
+  margin-block: 1rem;
+  border-radius: 8px;
+}
+
+.text-input{
+  width: 300px;
+  height: 80px;
+  padding-inline: 2rem;
+  border: 1px solid var(--clr-neutral-300);
+  border-radius: 8px;
+}
+
+.send{
+  display: flex;
+  gap: 8rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.send-btn{
+  background-color: var(--clr-primary-600);
+  color: var(--clr-neutral-500);
+  width: 90px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+}
+
+.delete-edit{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.delete-edit button{
+  border: none;
+  cursor: pointer;
 }
