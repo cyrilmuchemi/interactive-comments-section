@@ -216,3 +216,27 @@ body {
   cursor: pointer;
   background-color: transparent;
 }
+
+.reply_comment{
+  margin-left: 1.875rem;
+}
+
+.replies {
+  margin-left: 40px;
+  border-left: 2px solid #ccc;
+  padding-left: 16px;
+}
+.reply {
+  background-color: #f9f9f9;
+}
+.replying-to {
+  color: #4f92ff;
+  font-weight: bold;
+}
+
+
+.replies-wrapper {
+  margin-left: 2rem;
+  border-left: 2px solid var(--clr-neutral-300);
+  padding-left: 1rem;
+}
