@@ -286,3 +286,12 @@ body {
   border: none;
   cursor: pointer;
 }
+
+.you-badge {
+  background-color: var(--clr-primary-600);
+  color: var(--clr-neutral-500);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
