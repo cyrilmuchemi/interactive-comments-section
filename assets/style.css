@@ -256,7 +256,7 @@ body {
   width: 300px;
   height: 80px;
   padding-inline: 2rem;
-  border: 1px solid var(--clr-neutral-300);
+  border: 1px solid var(--clr-neutral-200);
   border-radius: 8px;
 }
 

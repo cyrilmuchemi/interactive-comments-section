@@ -27,7 +27,6 @@ fetch('./data.json')
         comments_box.innerHTML = comments_HTML;
     };
       
-      
     const generate_comment_html = (comment) => {
         return `
           <div class="comment">
