@@ -121,5 +121,23 @@ fetch('./data.json')
       display_comments(all_comments);
       comment_input.value = "";
     });
+
+    comments_box.addEventListener('click', (e) => {
+      if (e.target.closest('.add')) {
+        const scoreEl = e.target.closest('.vote').querySelector('.score');
+        scoreEl.textContent = parseInt(scoreEl.textContent) + 1;
+      }
+    
+      if (e.target.closest('.subtract')) {
+        const scoreEl = e.target.closest('.vote').querySelector('.score');
+        let currentScore = parseInt(scoreEl.textContent);
+        if (currentScore > 0) {
+          scoreEl.textContent = currentScore - 1;
+        }
+      }
+    });
+    
+
+
       
       
