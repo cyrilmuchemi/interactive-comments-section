@@ -3,12 +3,23 @@ const send_button = document.querySelector('.send-btn');
 const comment_input = document.querySelector('.text-input');
 let all_comments = [];
 let current_user = {};
+const LOCAL_STORAGE_KEY = "comment_data";
+
+const save_comments_to_local = () => {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(all_comments));
+}
+
+const load_comments_from_local = () => {
+  const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+  return stored ? JSON.parse(stored) : null;
+}
 
 fetch('./data.json')
     .then(response => response.json())
     .then(data => {
       current_user = data.currentUser;
-        all_comments = data.comments;
+      const local_comments = load_comments_from_local();
+        all_comments = local_comments || data.comments;
         display_comments(all_comments);
     })
     .catch(error => console.log("Error loading JSON:", error));
@@ -119,23 +130,48 @@ fetch('./data.json')
 
       all_comments.push(new_commment);
       display_comments(all_comments);
+      save_comments_to_local();
       comment_input.value = "";
     });
 
     comments_box.addEventListener('click', (e) => {
-      if (e.target.closest('.add')) {
-        const scoreEl = e.target.closest('.vote').querySelector('.score');
-        scoreEl.textContent = parseInt(scoreEl.textContent) + 1;
-      }
-    
-      if (e.target.closest('.subtract')) {
+      if (e.target.closest('.add') || e.target.closest('.subtract')) {
         const scoreEl = e.target.closest('.vote').querySelector('.score');
         let currentScore = parseInt(scoreEl.textContent);
-        if (currentScore > 0) {
+    
+        if (e.target.closest('.add')) {
+          scoreEl.textContent = currentScore + 1;
+        } else if (e.target.closest('.subtract') && currentScore > 0) {
           scoreEl.textContent = currentScore - 1;
         }
+    
+        update_scores_from_DOM();
+        save_comments_to_local(); 
       }
     });
+
+    const update_scores_from_DOM = () => {
+      const allCommentEls = document.querySelectorAll('.comment');
+    
+      allCommentEls.forEach((el, index) => {
+        const username = el.querySelector('.text-name').textContent.trim();
+        const content = el.querySelector('p.font-bold.pt-2')?.textContent.trim();
+        const score = parseInt(el.querySelector('.score').textContent.trim());
+    
+        all_comments.forEach(comment => {
+          if (comment.user.username === username && comment.content.trim() === content) {
+            comment.score = score;
+          }
+          comment.replies.forEach(reply => {
+            if (reply.user.username === username && reply.content.trim() === content) {
+              reply.score = score;
+            }
+          });
+        });
+      });
+    }
+    
+    
     
 
 
