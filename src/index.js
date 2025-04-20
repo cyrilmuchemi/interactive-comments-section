@@ -51,7 +51,7 @@ fetch('./data.json')
             <img class="avatar" src="${comment.user.image.webp}" alt="avatar">
             <p class="font-bolder text-name fs-2">${comment.user.username}</p>
             ${isCurrentUser ? '<span class="you-badge">You</span>' : ''}
-            <p class="font-bold">${comment.createdAt}</p>
+            <p class="font-bold text-date">${comment.createdAt}</p>
           </div>
           <p class="font-bold pt-2">
             ${comment.replyingTo ? `<span class="replying-to">@${comment.replyingTo}</span> ` : ''}${comment.content}
@@ -87,7 +87,7 @@ fetch('./data.json')
             <img class="avatar" src="${reply.user.image.webp}" alt="avatar">
             <p class="font-bolder text-name fs-2">${reply.user.username}</p>
             ${isCurrentUser ? '<span class="you-badge">You</span>' : ''}
-            <p class="font-bold text-sm">${reply.createdAt}</p>
+            <p class="font-bold text-date">${reply.createdAt}</p>
           </div>
           <p class="font-bold pt-2">
             ${reply.replyingTo ? `<span class="replying-to">@${reply.replyingTo}</span> ` : ''}${reply.content}

@@ -111,6 +111,17 @@ body {
   color: var(--clr-primary-500);
 }
 
+.text-date{
+  font-size: 0.7rem;
+  min-width: 100%;
+}
+
+@media(min-width:50em){
+  .text-date{
+    font-size: 1rem;
+  }
+}
+
 .mt-1{
   margin-top: 1rem;
 }
@@ -166,11 +177,6 @@ body {
 .fs-3{
   font-size: 1.55rem;
 }
-
-.text-sm{
-  min-width: 100%;
-}
-
 /*project styling*/
 .comment{
   background-color: var(--clr-neutral-400);
@@ -236,8 +242,8 @@ body {
 }
 
 .replies-wrapper {
-  margin-left: 0.875rem;
-  border-left: 2px solid var(--clr-neutral-300);
+  margin-left: 1.3rem;
+  border-left: 2px solid var(--clr-primary-300);
 }
 
 .post-comment{
