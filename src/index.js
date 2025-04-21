@@ -46,7 +46,7 @@ fetch('./data.json')
       const isCurrentUser = comment.user.username === current_user.username;
     
       return `
-        <div class="comment ${isCurrentUser ? ' current-user' : ''}">
+        <div class="comment ${isCurrentUser ? ' current-user' : ''}" data-id="${comment.id}"  data-type="comment">
           <div class="comment-top pt-2">
             <img class="avatar" src="${comment.user.image.webp}" alt="avatar">
             <p class="font-bolder text-name fs-2">${comment.user.username}</p>
@@ -64,8 +64,12 @@ fetch('./data.json')
             </div>
             ${isCurrentUser ? `
               <div class="delete-edit">
-                <button><img src="./assets/images/icon-delete.svg" alt="delete icon"/></button>
-                <button><img src="./assets/images/icon-edit.svg" alt="edit icon"/></button>
+                <button class="delete-btn" data-id=${comment.id} data-type="comment">
+                  <img src="./assets/images/icon-delete.svg" alt="delete icon"/>
+                </button>
+                <button class="edit-btn" data-id=${comment.id} data-type="comment">
+                  <img src="./assets/images/icon-edit.svg" alt="edit icon"/>
+                </button>
               </div>
             ` : `
               <button class="reply text-blue font-bolder">
@@ -82,7 +86,7 @@ fetch('./data.json')
       const isCurrentUser = reply.user.username === current_user.username;
     
       return `
-        <div class="comment${isCurrentUser ? ' current-user' : ''}">
+        <div class="comment${isCurrentUser ? ' current-user' : ''}" data-id="${reply.id}" data-type="reply">
           <div class="comment-top pt-2">
             <img class="avatar" src="${reply.user.image.webp}" alt="avatar">
             <p class="font-bolder text-name fs-2">${reply.user.username}</p>
@@ -100,8 +104,12 @@ fetch('./data.json')
             </div>
             ${isCurrentUser ? `
               <div class="delete-edit">
-                <button><img src="./assets/images/icon-delete.svg" alt="delete icon"/></button>
-                <button><img src="./assets/images/icon-edit.svg" alt="edit icon"/></button>
+                <button class="delete-btn"  data-id=${reply.id} data-type="reply" data-comment-id="${reply.commentId}">
+                  <img src="./assets/images/icon-delete.svg" alt="delete icon"/>
+                </button>
+                <button class="edit-btn"  data-id=${reply.id} data-type="reply" data-comment-id="${reply.commentId}">
+                  <img src="./assets/images/icon-edit.svg" alt="edit icon"/>
+                </button>
               </div>
             ` : `
               <button class="reply text-blue font-bolder">
@@ -147,6 +155,55 @@ fetch('./data.json')
     
         update_scores_from_DOM();
         save_comments_to_local(); 
+      }
+
+      if(e.target.closest('.delete-btn')){
+        const commentEl = e.target.closest('.comment');
+        if (!commentEl) return; 
+        const id = parseInt(commentEl.dataset.id);
+        const type = commentEl.dataset.type;
+    
+        if(type === 'comment'){
+          all_comments = all_comments.filter(comment => comment.id !== id);
+        }else if(type === 'reply'){
+          all_comments.forEach(comment => {
+            comment.replies = comment.replies.filter(r => r.id !== id);
+          });
+        }
+
+        display_comments(all_comments);
+        save_comments_to_local();
+        return;
+      }
+
+      if(e.target.closest('.edit-btn')){
+        const btn = e.target.closest('.edit-btn');
+        const id = parseInt(btn.dataset.id);
+        const type = btn.dataset.type;
+        const commentId = parseInt(btn.dataset.commentId);
+
+        let comment_to_edit;
+
+        if(type === 'comment'){
+          comment_to_edit = all_comments.find(comment => comment.id === id);
+        }else if(type === 'reply'){
+          const parent = all_comments.find(comment => comment.id === commentId);
+
+          if(parent){
+            comment_to_edit = parent.replies.find(reply => reply.id === id);
+          }
+        }
+
+        if(comment_to_edit){
+          const new_content = prompt("Edit your comment", comment_to_edit.content);
+
+          if(new_content !== null && new_content !== ''){
+            comment_to_edit.content = new_content.trim();
+            display_comments(all_comments);
+            save_comments_to_local();
+          }
+        }
+        return;
       }
     });
 
