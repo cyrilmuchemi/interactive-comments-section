@@ -4,6 +4,23 @@ const comment_input = document.querySelector('.text-input');
 let all_comments = [];
 let current_user = {};
 const LOCAL_STORAGE_KEY = "comment_data";
+const modalOverlay = document.querySelector('.modal-overlay');
+const modalTextarea = document.querySelector('.modal-textarea');
+const cancelBtn = document.querySelector('.cancel-btn');
+const saveBtn = document.querySelector('.save-btn');
+const deleteModalOverlay = document.getElementById('deleteModalOverlay');
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+let itemToDelete = null; 
+
+function openDeleteModal() {
+  deleteModalOverlay.style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  deleteModalOverlay.style.display = 'none';
+}
+
 
 const save_comments_to_local = () => {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(all_comments));
@@ -154,58 +171,71 @@ fetch('./data.json')
         }
     
         update_scores_from_DOM();
-        save_comments_to_local(); 
-      }
-
-      if(e.target.closest('.delete-btn')){
-        const commentEl = e.target.closest('.comment');
-        if (!commentEl) return; 
-        const id = parseInt(commentEl.dataset.id);
-        const type = commentEl.dataset.type;
-    
-        if(type === 'comment'){
-          all_comments = all_comments.filter(comment => comment.id !== id);
-        }else if(type === 'reply'){
-          all_comments.forEach(comment => {
-            comment.replies = comment.replies.filter(r => r.id !== id);
-          });
-        }
-
-        display_comments(all_comments);
         save_comments_to_local();
         return;
       }
-
-      if(e.target.closest('.edit-btn')){
+    
+      if (e.target.closest('.delete-btn')) {
+        const commentEl = e.target.closest('.comment');
+        if (!commentEl) return;
+      
+        const id = parseInt(commentEl.dataset.id);
+        const type = commentEl.dataset.type;
+        const commentId = parseInt(commentEl.dataset.commentId); // for a reply
+        itemToDelete = { id, type, commentId };
+        openDeleteModal();
+        return;
+      }
+      
+    
+      if (e.target.closest('.edit-btn')) {
         const btn = e.target.closest('.edit-btn');
         const id = parseInt(btn.dataset.id);
         const type = btn.dataset.type;
         const commentId = parseInt(btn.dataset.commentId);
-
-        let comment_to_edit;
-
-        if(type === 'comment'){
+    
+        let comment_to_edit = null;
+    
+        if (type === 'comment') {
           comment_to_edit = all_comments.find(comment => comment.id === id);
-        }else if(type === 'reply'){
+        } else if (type === 'reply') {
           const parent = all_comments.find(comment => comment.id === commentId);
-
-          if(parent){
+          if (parent) {
             comment_to_edit = parent.replies.find(reply => reply.id === id);
           }
         }
-
-        if(comment_to_edit){
-          const new_content = prompt("Edit your comment", comment_to_edit.content);
-
-          if(new_content !== null && new_content !== ''){
-            comment_to_edit.content = new_content.trim();
-            display_comments(all_comments);
-            save_comments_to_local();
-          }
+    
+        if (comment_to_edit) {
+          openEditModal(comment_to_edit);
         }
+    
         return;
       }
     });
+    
+
+    function openEditModal(comment) {
+      modalOverlay.style.display = 'flex';
+      modalTextarea.value = comment.content;
+
+      saveBtn.onclick = function() {
+        const new_content = modalTextarea.value.trim();
+        if (new_content !== '') {
+          comment.content = new_content;
+          display_comments(all_comments);
+          save_comments_to_local();
+        }
+        closeModal();
+      };
+    
+      cancelBtn.onclick = function() {
+        closeModal();
+      };
+    }
+    
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+    }
 
     const update_scores_from_DOM = () => {
       const allCommentEls = document.querySelectorAll('.comment');
@@ -227,6 +257,31 @@ fetch('./data.json')
         });
       });
     }
+
+    confirmDeleteBtn.onclick = function() {
+      if (!itemToDelete) return;
+    
+      const { id, type, commentId } = itemToDelete;
+    
+      if (type === 'comment') {
+        all_comments = all_comments.filter(comment => comment.id !== id);
+      } else if (type === 'reply') {
+        all_comments.forEach(comment => {
+          comment.replies = comment.replies.filter(r => r.id !== id);
+        });
+      }
+    
+      display_comments(all_comments);
+      save_comments_to_local();
+    
+      closeDeleteModal();
+      itemToDelete = null;
+    };
+
+    cancelDeleteBtn.onclick = function() {
+      closeDeleteModal();
+      itemToDelete = null;
+    };
     
     
     
