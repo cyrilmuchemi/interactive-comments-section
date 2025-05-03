@@ -12,6 +12,16 @@ const deleteModalOverlay = document.getElementById('deleteModalOverlay');
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 let itemToDelete = null; 
+const replyFormOverlay = document.getElementById('replyFormOverlay');
+const replyTextarea = document.querySelector('.reply-textarea');
+const submitReplyBtn = document.getElementById('submitReplyBtn');
+
+let replyingTo = {
+  id: null,
+  type: null,
+  username: null,
+  commentId: null
+};
 
 function openDeleteModal() {
   deleteModalOverlay.style.display = 'flex';
@@ -51,6 +61,13 @@ const display_comments = (displayed_comments) => {
         comments_HTML += '<div class="replies-wrapper">';
         comment.replies.forEach(reply => {
           comments_HTML += generate_reply_html(reply);
+          if(reply.replies && reply.replies.length > 0) {
+            comments_HTML += '<div class="replies-wrapper">';
+            reply.replies.forEach(nestedReply => {
+              comments_HTML += generate_comment_html(nestedReply);
+            });
+            comments_HTML += '</div>';
+          }
         });
         comments_HTML += '</div>';
       }
@@ -103,7 +120,7 @@ const generate_reply_html = (reply) => {
   const isCurrentUser = reply.user.username === current_user.username;
 
   return `
-    <div class="comment${isCurrentUser ? ' current-user' : ''}" data-id="${reply.id}" data-type="reply">
+    <div class="comment${isCurrentUser ? ' current-user' : ''}" data-id="${reply.id}" data-type="reply" data-comment-id="${reply.commentId}">
       <div class="comment-top pt-2">
         <img class="avatar" src="${reply.user.image.webp}" alt="avatar">
         <p class="font-bolder text-name fs-2">${reply.user.username}</p>
@@ -111,7 +128,7 @@ const generate_reply_html = (reply) => {
         <p class="font-bold text-date">${reply.createdAt}</p>
       </div>
       <p class="font-bold pt-2">
-        ${reply.replyingTo ? `<span class="replying-to">@${reply.replyingTo}</span> ` : ''}${reply.content}
+        ${reply.replyingTo ? `<span class="replying-to">@${reply.replyingTo}</span><span> </span>` : ''}${reply.content}
       </p>
       <div class="comment-bottom pt-2">
         <div class="vote">
@@ -211,7 +228,39 @@ comments_box.addEventListener('click', (e) => {
 
     return;
   }
+
+  if(e.target.closest('.reply')){
+    const commentEl = e.target.closest('.comment');
+    if(!commentEl) return;
+
+    const id = parseInt(commentEl.dataset.id);
+    const type = commentEl.dataset.type;
+    const username = commentEl.querySelector('.text-name').textContent.trim();
+    const commentId = type === 'reply' ? parseInt(commentEl.dataset.commentId) || findParentCommentId(all_comments, id) : id;
+
+    replyingTo = {id, type, username, commentId : commentId || id};
+
+    showReplyForm(commentEl);
+    return;
+  }
 });
+
+function findParentCommentId(comments, replyId) {
+  for (const comment of comments) {
+    if (comment.replies) {
+      const foundReply = comment.replies.find(r => r.id === replyId);
+      if (foundReply) return comment.id;
+      
+      for (const reply of comment.replies) {
+        if (reply.replies) {
+          const nestedFound = reply.replies.find(r => r.id === replyId);
+          if (nestedFound) return comment.id;
+        }
+      }
+    }
+  }
+  return null;
+}
 
 
 function openEditModal(comment) {
@@ -282,10 +331,81 @@ cancelDeleteBtn.onclick = function() {
   closeDeleteModal();
   itemToDelete = null;
 };
-    
-    
-    
 
+function showReplyForm(commentEl) {
+  const existingForms = document.querySelectorAll('#replyFormOverlay');
+  existingForms.forEach(form => {
+    if(form !== replyFormOverlay) form.remove();
+  });
 
-      
-      
+  const newReplyForm = replyFormOverlay.cloneNode(true);
+  newReplyForm.style.display = 'block';
+  newReplyForm.querySelector('.reply-textarea').value = `@${replyingTo.username} `;
+
+  commentEl.insertAdjacentElement('afterend', newReplyForm);
+
+  newReplyForm.querySelector('.reply-textarea').focus();
+
+  const submitBtn = newReplyForm.querySelector('#submitReplyBtn');
+  submitBtn.onclick = function() {
+    handleReplySubmit(newReplyForm);
+  };
+}
+
+function handleReplySubmit(form) {
+  const replyText = form.querySelector('.reply-textarea').value.trim();
+
+  if(replyText === '') return;
+
+  const newReply = {
+    id: Date.now(),
+    content: replyText.replace(`@${replyingTo.username} `, '').trim(),
+    createdAt: "Just now",
+    score: 0,
+    replyingTo: replyingTo.username,
+    user: current_user,
+    commentId: replyingTo.commentId
+  };
+
+  if(replyingTo.type === 'comment') {
+    const comment = all_comments.find(c => c.id === replyingTo.id);
+    if(comment) {
+      if(!comment.replies) comment.replies = [];
+      comment.replies.push(newReply);
+    }
+  } else if(replyingTo.type === 'reply') {
+    const parentComment = all_comments.find(c => c.id === replyingTo.commentId);
+
+    if (!parentComment) {
+      console.error("Parent comment not found");
+      return;
+    }
+
+    const targetReply = find_repy_in_replies(parentComment.replies, replyingTo.id);
+    
+    if (!targetReply) {
+      console.error("Target reply not found in parent comment's replies");
+      return;
+    }
+
+    if(!targetReply.replies) targetReply.replies = [];
+
+    targetReply.replies.push(newReply);
+  }
+
+  display_comments(all_comments);
+  save_comments_to_local();
+  form.remove();
+}
+
+function find_repy_in_replies(replies, targetId){
+  if (!replies) return null;
+  for(const reply of replies){
+    if(reply.id === targetId) return reply;
+    if(reply.replies) {
+      const found = find_repy_in_replies(reply.replies, targetId);
+      if(found) return found;
+    }
+  }
+  return null;
+}
