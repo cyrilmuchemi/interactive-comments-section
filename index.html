@@ -14,7 +14,7 @@
   </div>
   <div class="post-comment"> 
     <label for="comment"></label>
-    <input type="text" class="text-input" placeholder="Add a comment...">
+    <textarea class="text-input" placeholder="Add a reply..."></textarea>
     <div class="send">
       <img width="40" src="./assets/images/avatars/image-juliusomo.webp" alt="avatar">
       <button class="send-btn">SEND</button>
@@ -43,8 +43,12 @@
   </div>  
   <div id="replyFormOverlay" style="display: none;">
     <div class="reply-form">
+      <button class="close-reply-form">
+        <img src="./assets/images/icons8-close.svg" alt="Close reply form">
+      </button>
       <textarea class="reply-textarea" placeholder="Add a reply..."></textarea>
       <div class="reply-actions">
+        <img width="40" src="./assets/images/avatars/image-juliusomo.webp" alt="avatar">
         <button id="submitReplyBtn" class="send-btn">REPLY</button>
       </div>
     </div>

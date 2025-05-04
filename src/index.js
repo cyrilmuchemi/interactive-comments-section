@@ -342,6 +342,11 @@ function showReplyForm(commentEl) {
   newReplyForm.style.display = 'block';
   newReplyForm.querySelector('.reply-textarea').value = `@${replyingTo.username} `;
 
+  const closeBtn = newReplyForm.querySelector('.close-reply-form');
+  closeBtn.addEventListener('click', () => {
+    newReplyForm.remove();
+  });
+
   commentEl.insertAdjacentElement('afterend', newReplyForm);
 
   newReplyForm.querySelector('.reply-textarea').focus();
